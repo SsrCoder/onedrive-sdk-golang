@@ -19,10 +19,10 @@ func main() {
 		panic(err)
 	}
 
-	// fmt.Println(client.Token.AccessToken)
 	resp, err := client.Me()
 	if err != nil {
 		panic(err)
 	}
+
 	fmt.Println(resp)
 }
