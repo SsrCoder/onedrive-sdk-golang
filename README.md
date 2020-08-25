@@ -32,35 +32,24 @@
 
 ### 访问用户信息
 
+参考 examples/login/main.go
+
 获取用户信息只需要使用 User.Read 权限，所以我们在scopes里只添加了 User.Read
 
-```go
-package main
+## 计划API调用方法
 
-import (
-	"fmt"
-
-	onedrivesdk "github.com/SsrCoder/onedrive-sdk-golang"
-)
-
-func main() {
-	clientID := "**************"
-	clientSecret := "**************"
-	redirectUri := "http://localhost:8080"
-	scopes := []string{
-		"User.Read",
-	}
-
-	client := onedrivesdk.NewClient(clientID, clientSecret, redirectUri, scopes)
-	if err := client.Authenticate(); err != nil {
-		panic(err)
-	}
-
-	// fmt.Println(client.Token.AccessToken)
-	resp, err := client.Me()
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(resp)
-}
-```
+1. client := NewClient()
+2. fs := NewFileSystem(client)
+3. fs.Cache(true)
+4. fs.SetExpire(0,0,0,0,10,0) // 年,月,日,时,分,秒
+5. root := fs.Root()
+6. dir := fs.OpenDir("/foo")
+7. fs.Refresh()
+8. children := dir.Children()
+9. file := children[0]
+10. file.IsFile()
+11. file.IsDir()
+12. file.Write()
+13. file.WriteAppend().WriteAppend()
+14. file2 := root.Upload("")
+15. dir.Copy("/")
