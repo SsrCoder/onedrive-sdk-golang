@@ -3,13 +3,14 @@ package client
 import (
 	"context"
 	"fmt"
+	"net/http"
+	"net/url"
+	"strings"
+
 	"github.com/SsrCoder/onedrive-sdk-golang/consts"
 	"github.com/SsrCoder/onedrive-sdk-golang/utils"
 	"github.com/guonaihong/gout"
 	"github.com/guonaihong/gout/dataflow"
-	"net/http"
-	"net/url"
-	"strings"
 )
 
 type Client struct {
@@ -136,4 +137,16 @@ func (c *Client) PostWWWForm(url string, data interface{}) *dataflow.DataFlow {
 	g = g.SetHeader(c.defaultHeader())
 	g = g.SetWWWForm(data)
 	return g
+}
+
+func (c *Client) Refresh() error {
+	param := map[string]interface{}{
+		"client_id":     c.ClientID,
+		"redirect_uri":  c.RedirectUri,
+		"client_secret": c.ClientSecret,
+		"refresh_token": c.Token.RefreshToken,
+		"grant_type":    "refresh_token",
+	}
+
+	return c.PostWWWForm(consts.MsaAuthTokenUrl, param).BindJSON(&c.Token).Do()
 }
